@@ -184,7 +184,11 @@ function aplicarSom(identity) {
     btn.title = silencioso ? 'Ativar som' : 'Silenciar';
     btn.setAttribute('aria-label', btn.title);
     btn.classList.toggle('mudo', silencioso);
-    tile.querySelector('.volume').value = Math.round(pref.volume * 100);
+    // no mudo a barra mostra zero; o volume escolhido volta ao tirar do mudo
+    const nivel = pref.mudo ? 0 : Math.round(pref.volume * 100);
+    const barra = tile.querySelector('.volume');
+    barra.value = nivel;
+    barra.style.setProperty('--p', nivel / 100);
   });
 }
 
@@ -211,7 +215,7 @@ function controlesDeSom(participante) {
   volume.oninput = () => {
     const pref = prefsDe(participante);
     pref.volume = volume.value / 100;
-    pref.mudo = false;
+    pref.mudo = pref.volume === 0;
     aplicarSom(participante.identity);
   };
 
@@ -268,6 +272,17 @@ function adicionarTrack(track, pub, participante, local = false) {
   cheia.setAttribute('aria-label', 'Tela cheia');
   cheia.onclick = () => alternarTelaCheia(tile);
   cheia.addEventListener('pointerup', () => cheia.blur());
+
+  // controles somem com o mouse parado por 2,5 s (como num player de vídeo)
+  let ocioso;
+  const acordar = () => {
+    tile.classList.remove('ocioso');
+    clearTimeout(ocioso);
+    ocioso = setTimeout(() => tile.classList.add('ocioso'), 2500);
+  };
+  tile.addEventListener('pointermove', acordar);
+  tile.addEventListener('pointerdown', acordar);
+  tile.addEventListener('pointerleave', () => clearTimeout(ocioso));
   video.addEventListener('dblclick', () => alternarTelaCheia(tile));
 
   tile.append(video, rotulo, cheia);

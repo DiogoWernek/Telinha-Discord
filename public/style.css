@@ -288,17 +288,47 @@ input:hover { border-color: #57443a; }
 /* aparece ao passar o mouse (ou navegando pelo teclado); some quando o mouse sai, mesmo após clicar */
 .tile:hover .controles-som,
 .controles-som:has(:focus-visible) { opacity: 1; }
-/* no mudo, fica só o ícone visível como aviso */
-.tile:not(:hover) .controles-som:has(.btn-mudo.mudo) { opacity: 1; padding-right: 2px; }
-.tile:not(:hover) .controles-som:has(.btn-mudo.mudo) .volume { display: none; }
+/* mouse parado em cima do vídeo (comum em tela cheia): tudo some, inclusive o cursor */
+.tile.ocioso .controles-som,
+.tile.ocioso .tela-cheia { opacity: 0; }
+.tile.ocioso { cursor: none; }
 .volume:focus-visible { outline: none; }
 .controles-som .btn-mudo { width: 36px; height: 36px; color: var(--texto); }
 .controles-som .btn-mudo.mudo { color: var(--coral); }
+/* barra de volume desenhada à mão: o preenchimento termina exatamente no centro da bolinha */
 .volume {
+  --p: 1;            /* nível de 0 a 1, atualizado pelo JS */
+  --bola: 14px;
+  -webkit-appearance: none;
+  appearance: none;
   width: 96px;
-  accent-color: var(--coral);
+  height: 20px;
+  margin: 0;
+  background: transparent;
   cursor: pointer;
 }
+.volume::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--coral) calc(var(--bola) / 2 + (100% - var(--bola)) * var(--p)),
+    rgba(247, 237, 227, 0.22) 0
+  );
+}
+.volume::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: var(--bola);
+  height: var(--bola);
+  margin-top: calc((4px - var(--bola)) / 2);
+  border-radius: 50%;
+  background: var(--texto);
+  border: 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+.volume::-moz-range-track { height: 4px; border-radius: 999px; background: rgba(247, 237, 227, 0.22); }
+.volume::-moz-range-progress { height: 4px; border-radius: 999px; background: var(--coral); }
+.volume::-moz-range-thumb { width: var(--bola); height: var(--bola); border: 0; border-radius: 50%; background: var(--texto); }
 
 /* tela cheia dentro da Atividade (o iframe do Discord não libera a Fullscreen API) */
 .tile.cheia {
