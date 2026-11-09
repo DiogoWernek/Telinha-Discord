@@ -3,16 +3,38 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#16110F" />
   <title>Telinha</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main id="entrada" class="card">
-    <h1>📺 Telinha</h1>
-    <p class="sub">Compartilhe sua tela com a galera do Discord.</p>
-    <form id="form-entrar">
+  <!-- ícones (traço 2px, 24px) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-marca" viewBox="0 0 256 256">
+      <path d="M128 70 L95 28 M128 70 L161 28" stroke="currentColor" stroke-width="16" stroke-linecap="round" fill="none"/>
+      <path fill-rule="evenodd" fill="currentColor" d="M72 66 H184 A48 48 0 0 1 232 114 V184 A48 48 0 0 1 184 232 H72 A48 48 0 0 1 24 184 V114 A48 48 0 0 1 72 66 Z M76 102 H180 Q196 102 196 118 Q196 200 128 200 Q60 200 60 118 Q60 102 76 102 Z"/>
+    </symbol>
+    <symbol id="i-tela" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2.5"/><path d="M8 20h8M12 16v4M12 13V7M9.5 9.5 12 7l2.5 2.5"/></g></symbol>
+    <symbol id="i-parar" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="currentColor"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1"/><path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/></g></symbol>
+    <symbol id="i-ok" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-som" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></g></symbol>
+    <symbol id="i-sair" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l-4-4 4-4M6 12h10"/></g></symbol>
+    <symbol id="i-cheia" viewBox="0 0 24 24"><path d="M4 9V5.5A1.5 1.5 0 0 1 5.5 4H9M15 4h3.5A1.5 1.5 0 0 1 20 5.5V9M20 15v3.5a1.5 1.5 0 0 1-1.5 1.5H15M9 20H5.5A1.5 1.5 0 0 1 4 18.5V15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  </svg>
+
+  <!-- Entrada -->
+  <main id="entrada" class="entrada">
+    <section class="hero">
+      <div class="logo-grande" aria-hidden="true"><svg><use href="#i-marca"/></svg></div>
+      <h1>Telinha</h1>
+      <p class="slogan">Sua tela na call da galera.<br />Sem Go Live, sem complicação.</p>
+    </section>
+
+    <form id="form-entrar" class="painel">
       <label>Seu nome
-        <input id="nome" maxlength="32" required autocomplete="nickname" />
+        <input id="nome" maxlength="32" required autocomplete="nickname" placeholder="Como a galera te chama" />
       </label>
       <label>Sala
         <input id="sala" maxlength="48" required placeholder="ex: jogatina" />
@@ -20,23 +42,38 @@
       <label id="campo-codigo" hidden>Código de acesso
         <input id="codigo" type="password" />
       </label>
-      <button type="submit" id="btn-entrar">Entrar</button>
+      <button type="submit" id="btn-entrar" class="btn primario grande">Ligar a telinha</button>
       <p id="erro" class="erro" role="alert"></p>
     </form>
+
+    <div id="carregando" class="carregando" hidden>
+      <div class="logo-pulsa" aria-hidden="true"><svg><use href="#i-marca"/></svg></div>
+      <p id="carregando-texto">Ligando a telinha…</p>
+    </div>
   </main>
 
-  <section id="sala-view" hidden>
+  <!-- Sala -->
+  <section id="sala-view" class="sala" hidden>
     <header class="barra">
-      <strong id="titulo-sala"></strong>
-      <span id="pessoas" class="pill"></span>
+      <div class="marca-mini" aria-hidden="true"><svg><use href="#i-marca"/></svg></div>
+      <div class="sala-info">
+        <strong id="titulo-sala"></strong>
+        <span id="pessoas" class="pessoas"></span>
+      </div>
+      <div id="avatares" class="avatares"></div>
       <div class="acoes">
-        <button id="btn-tela">🖥️ Compartilhar tela</button>
-        <button id="btn-link" class="sec">🔗 Copiar link</button>
-        <button id="btn-audio" class="sec" hidden>🔊 Ativar som</button>
-        <button id="btn-sair" class="perigo">Sair</button>
+        <button id="btn-audio" class="btn fantasma" hidden><svg><use href="#i-som"/></svg><span>Ativar som</span></button>
+        <button id="btn-link" class="btn fantasma"><svg><use href="#i-link"/></svg><span>Copiar link</span></button>
+        <button id="btn-tela" class="btn primario"><svg><use href="#i-tela"/></svg><span>Compartilhar tela</span></button>
+        <button id="btn-sair" class="btn icone" title="Sair da sala" aria-label="Sair da sala"><svg><use href="#i-sair"/></svg></button>
       </div>
     </header>
-    <div id="vazio" class="vazio">Ninguém está compartilhando a tela ainda.</div>
+
+    <div id="vazio" class="vazio">
+      <div class="tv-vazia" aria-hidden="true"><svg><use href="#i-marca"/></svg></div>
+      <h2>A telinha está desligada</h2>
+      <p>Ninguém está compartilhando ainda. Que tal ser o primeiro?</p>
+    </div>
     <div id="grade" class="grade"></div>
   </section>
 

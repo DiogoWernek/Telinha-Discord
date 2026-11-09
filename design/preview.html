@@ -1,0 +1,9 @@
+<!doctype html><meta charset="utf-8"><title>Telinha — conceitos</title>
+<style>body{margin:0;padding:24px;font:14px system-ui;background:#fff}h3{margin:18px 0 8px}
+.row{display:flex;gap:24px;align-items:end;flex-wrap:wrap}.dark{background:#16110F;padding:12px;border-radius:8px}
+img{display:block}.inv{filter:invert(1)}.blur{filter:blur(3px)}</style>
+<script>
+const c=[['a-sorriso.svg','A — TV sorriso'],['b-balao.svg','B — Tela-balão'],['c-t.svg','C — t de telinha']];
+document.write(c.map(([f,n])=>`<h3>${n}</h3><div class="row">${[192,64,32,16].map(s=>`<img src="${f}" width="${s}">`).join('')}
+<div class="dark row">${[64,32].map(s=>`<img class="inv" src="${f}" width="${s}">`).join('')}</div><img class="blur" src="${f}" width="64"></div>`).join(''));
+</script>

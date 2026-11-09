@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- B: tela que é um balão de conversa -->
+  <path fill-rule="evenodd" fill="#000" d="M72 36 H184 A48 48 0 0 1 232 84 V164 A48 48 0 0 1 184 212 H104 L56 244 L64 210 A48 48 0 0 1 24 164 V84 A48 48 0 0 1 72 36 Z
+    M80 72 H176 A20 20 0 0 1 196 92 V156 A20 20 0 0 1 176 176 H80 A20 20 0 0 1 60 156 V92 A20 20 0 0 1 80 72 Z"/>
+</svg>

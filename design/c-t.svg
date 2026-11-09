@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- C: "t" minúsculo cuja barra é uma telinha -->
+  <path fill="#000" d="M108 24 A20 20 0 0 1 148 24 V76 H108 Z"/>
+  <path fill-rule="evenodd" fill="#000" d="M56 76 H200 A28 28 0 0 1 228 104 V128 A28 28 0 0 1 200 156 H56 A28 28 0 0 1 28 128 V104 A28 28 0 0 1 56 76 Z
+    M60 100 H196 A8 8 0 0 1 204 108 V124 A8 8 0 0 1 196 132 H60 A8 8 0 0 1 52 124 V108 A8 8 0 0 1 60 100 Z"/>
+  <path fill="#000" d="M108 156 H148 V192 A12 12 0 0 0 160 204 H188 A20 20 0 0 1 188 244 H156 A48 48 0 0 1 108 196 Z"/>
+</svg>

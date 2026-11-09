@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- A: TV cuja tela é um sorriso -->
+  <path d="M128 70 L95 28" stroke="#000" stroke-width="16" stroke-linecap="round" fill="none"/>
+  <path d="M128 70 L161 28" stroke="#000" stroke-width="16" stroke-linecap="round" fill="none"/>
+  <path fill-rule="evenodd" fill="#000" d="M72 66 H184 A48 48 0 0 1 232 114 V184 A48 48 0 0 1 184 232 H72 A48 48 0 0 1 24 184 V114 A48 48 0 0 1 72 66 Z
+    M76 102 H180 Q196 102 196 118 Q196 200 128 200 Q60 200 60 118 Q60 102 76 102 Z"/>
+</svg>

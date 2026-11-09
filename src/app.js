@@ -56,8 +56,9 @@ $('form-entrar').addEventListener('submit', async (e) => {
 
 // ---------- Modo Atividade do Discord ----------
 async function iniciarNoDiscord() {
+  document.querySelector('.hero').hidden = true;
   $('form-entrar').hidden = true;
-  $('erro').textContent = 'Conectando ao Discord…';
+  $('carregando').hidden = false;
   try {
     discord = new DiscordSDK(config.discordClientId);
     await discord.ready();
@@ -88,7 +89,8 @@ async function iniciarNoDiscord() {
     dados.url = `wss://${location.host}/.proxy/livekit`;
     await entrar(dados);
   } catch (err) {
-    $('erro').textContent = 'Erro: ' + (err.message || err);
+    $('carregando-texto').textContent = 'Não deu para ligar a telinha: ' + (err.message || err);
+    document.querySelector('.logo-pulsa').style.animation = 'none';
     console.error(err);
   }
 }
@@ -121,7 +123,7 @@ async function entrar({ token, url, sala }) {
   salaAtual = sala;
   if (noDiscord) $('btn-link').hidden = true; // na Atividade não há link para copiar
   else history.replaceState(null, '', `?sala=${encodeURIComponent(sala)}`);
-  $('titulo-sala').textContent = `Sala: ${sala}`;
+  $('titulo-sala').textContent = noDiscord ? 'Telinha da call' : `#${sala}`;
   $('entrada').hidden = true;
   $('sala-view').hidden = false;
   atualizarPessoas();
@@ -150,12 +152,18 @@ function adicionarTrack(track, pub, participante, local = false) {
 
   const rotulo = document.createElement('span');
   rotulo.className = 'rotulo';
-  rotulo.textContent = local ? 'Você (prévia)' : participante.name || participante.identity;
+  const badge = document.createElement('span');
+  badge.className = 'ao-vivo';
+  badge.textContent = 'AO VIVO';
+  const quem = document.createElement('span');
+  quem.textContent = local ? 'Você' : participante.name || participante.identity;
+  rotulo.append(badge, quem);
 
   const cheia = document.createElement('button');
-  cheia.className = 'tela-cheia';
-  cheia.textContent = '⛶';
+  cheia.className = 'btn icone tela-cheia';
+  cheia.innerHTML = '<svg><use href="#i-cheia"/></svg>';
   cheia.title = 'Tela cheia';
+  cheia.setAttribute('aria-label', 'Tela cheia');
   cheia.onclick = () => (document.fullscreenElement ? document.exitFullscreen() : tile.requestFullscreen());
 
   tile.append(video, rotulo, cheia);
@@ -181,14 +189,31 @@ function atualizarVazio() {
 
 function atualizarPessoas() {
   if (!room) return;
-  const n = room.remoteParticipants.size + 1;
-  $('pessoas').textContent = `${n} ${n === 1 ? 'pessoa' : 'pessoas'}`;
+  const todos = [room.localParticipant, ...room.remoteParticipants.values()];
+  const n = todos.length;
+  $('pessoas').textContent = n === 1 ? 'Só você por aqui' : `${n} pessoas assistindo`;
+
+  const cores = ['#ff6b4a', '#ffb35c', '#5fd4a0', '#7cc4ff', '#d99cff', '#ff8fb1'];
+  const corDe = (s) => cores[[...s].reduce((a, c) => a + c.charCodeAt(0), 0) % cores.length];
+  $('avatares').replaceChildren(
+    ...todos.slice(0, 6).map((p) => {
+      const nome = p.name || p.identity;
+      const el = document.createElement('span');
+      el.className = 'avatar';
+      el.textContent = nome.trim()[0]?.toUpperCase() || '?';
+      el.title = p === room.localParticipant ? `${nome} (você)` : nome;
+      el.style.background = corDe(p.identity);
+      return el;
+    })
+  );
 }
 
 function atualizarBotaoTela() {
-  const ligado = room?.localParticipant.isScreenShareEnabled;
-  $('btn-tela').textContent = ligado ? '⏹️ Parar de compartilhar' : '🖥️ Compartilhar tela';
-  $('btn-tela').classList.toggle('ativo', Boolean(ligado));
+  const ligado = Boolean(room?.localParticipant.isScreenShareEnabled);
+  $('btn-tela').innerHTML = ligado
+    ? '<svg><use href="#i-parar"/></svg><span>Parar de compartilhar</span>'
+    : '<svg><use href="#i-tela"/></svg><span>Compartilhar tela</span>';
+  $('btn-tela').classList.toggle('ativo', ligado);
 }
 
 $('btn-tela').addEventListener('click', async () => {
@@ -228,11 +253,11 @@ $('btn-tela').addEventListener('click', async () => {
 $('btn-link').addEventListener('click', async () => {
   try {
     await navigator.clipboard.writeText(location.href);
-    $('btn-link').textContent = '✅ Copiado!';
+    $('btn-link').innerHTML = '<svg><use href="#i-ok"/></svg><span>Copiado!</span>';
   } catch {
     prompt('Copie o link:', location.href);
   }
-  setTimeout(() => ($('btn-link').textContent = '🔗 Copiar link'), 1500);
+  setTimeout(() => ($('btn-link').innerHTML = '<svg><use href="#i-link"/></svg><span>Copiar link</span>'), 1500);
 });
 
 $('btn-audio').addEventListener('click', () => room.startAudio());
