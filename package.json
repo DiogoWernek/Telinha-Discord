@@ -1,0 +1,22 @@
+{
+  "name": "telinha",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Compartilhamento de tela via LiveKit, com link para mandar no Discord",
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/app.js --bundle --format=esm --minify --sourcemap --outfile=public/app.js",
+    "start": "npm run build && node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@discord/embedded-app-sdk": "^2.5.0",
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0",
+    "livekit-client": "^2.23.0",
+    "livekit-server-sdk": "^2.19.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  }
+}

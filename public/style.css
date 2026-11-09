@@ -1,0 +1,96 @@
+:root {
+  --bg: #1e1f22;
+  --painel: #2b2d31;
+  --borda: #3f4147;
+  --texto: #f2f3f5;
+  --fraco: #b5bac1;
+  --azul: #5865f2;
+  --vermelho: #da373c;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--texto);
+  font: 15px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+button {
+  font: inherit;
+  border: 0;
+  border-radius: 6px;
+  padding: 8px 14px;
+  background: var(--azul);
+  color: #fff;
+  cursor: pointer;
+}
+button:disabled { opacity: .6; cursor: default; }
+button.sec { background: var(--borda); }
+button.perigo { background: var(--vermelho); }
+button.ativo { background: var(--vermelho); }
+
+.card {
+  max-width: 380px;
+  margin: 12vh auto 0;
+  padding: 28px;
+  background: var(--painel);
+  border-radius: 12px;
+}
+.card h1 { margin: 0 0 4px; }
+.sub { margin: 0 0 20px; color: var(--fraco); }
+form { display: grid; gap: 14px; }
+label { display: grid; gap: 6px; font-size: 13px; color: var(--fraco); }
+input {
+  font: inherit;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--borda);
+  background: var(--bg);
+  color: var(--texto);
+}
+.erro { color: #ff8a8a; min-height: 1em; margin: 0; }
+
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--painel);
+  border-bottom: 1px solid var(--borda);
+}
+.pill { font-size: 12px; color: var(--fraco); }
+.acoes { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px; }
+
+.vazio { padding: 60px 16px; text-align: center; color: var(--fraco); }
+.grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr));
+  gap: 12px;
+  padding: 12px;
+}
+.tile {
+  position: relative;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.tile video { display: block; width: 100%; max-height: 85vh; object-fit: contain; }
+.tile .rotulo {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, .65);
+  font-size: 13px;
+}
+.tile .tela-cheia {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, .65);
+}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Telinha</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main id="entrada" class="card">
+    <h1>📺 Telinha</h1>
+    <p class="sub">Compartilhe sua tela com a galera do Discord.</p>
+    <form id="form-entrar">
+      <label>Seu nome
+        <input id="nome" maxlength="32" required autocomplete="nickname" />
+      </label>
+      <label>Sala
+        <input id="sala" maxlength="48" required placeholder="ex: jogatina" />
+      </label>
+      <label id="campo-codigo" hidden>Código de acesso
+        <input id="codigo" type="password" />
+      </label>
+      <button type="submit" id="btn-entrar">Entrar</button>
+      <p id="erro" class="erro" role="alert"></p>
+    </form>
+  </main>
+
+  <section id="sala-view" hidden>
+    <header class="barra">
+      <strong id="titulo-sala"></strong>
+      <span id="pessoas" class="pill"></span>
+      <div class="acoes">
+        <button id="btn-tela">🖥️ Compartilhar tela</button>
+        <button id="btn-link" class="sec">🔗 Copiar link</button>
+        <button id="btn-audio" class="sec" hidden>🔊 Ativar som</button>
+        <button id="btn-sair" class="perigo">Sair</button>
+      </div>
+    </header>
+    <div id="vazio" class="vazio">Ninguém está compartilhando a tela ainda.</div>
+    <div id="grade" class="grade"></div>
+  </section>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
