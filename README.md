@@ -106,34 +106,76 @@ Faça um **fork** deste repositório no GitHub, ou clone e suba no seu próprio 
 
 Para testar, abra `https://<seu-deploy>/api/config`. A resposta deve mostrar o seu `discordClientId` e a `publicUrl`.
 
-### 5. Ligar a Atividade no Discord
+### 5. Configurar a Atividade no Developer Portal
 
-De volta ao Developer Portal:
+Faça **nesta ordem**: o Discord só deixa ligar as Atividades depois que o mapeamento existe.
 
-1. Em **Atividades → Mapeamentos de URL**, configure:
+**5.1 Mapeamentos de URL** (menu lateral → **Atividades → Mapeamentos de URL**)
 
-   | Prefixo | Alvo |
-   |---|---|
-   | `/` | `meu-telinha.vercel.app` *(o seu domínio, sem `https://`)* |
-   | `/livekit` | `meu-projeto-abc123.livekit.cloud` *(o host do LiveKit, sem `wss://`)* |
+| Campo | Prefixo | Alvo |
+|---|---|---|
+| Mapeamento de raízes | `/` | `meu-telinha.vercel.app` |
+| Clique em **Adicione outro mapeamento de URL** | `/livekit` | `meu-projeto-abc123.livekit.cloud` |
 
-   O primeiro vai em "Mapeamento de raízes". O segundo você cria em **Adicione outro mapeamento de URL**.
+- No **alvo**, coloque **só o domínio**: sem `https://`, sem `wss://` e sem `/` no final.
+- O alvo do `/livekit` é o seu `LIVEKIT_URL` sem o `wss://`.
+- Clique em **Salvar alterações** (a barra que aparece embaixo da página).
 
-2. Em **Atividades → Configurações**, ative **Ativar atividades**. A opção só libera depois que o mapeamento estiver salvo.
+**5.2 Ligar as Atividades** (menu lateral → **Atividades → Configurações**)
 
-3. Em **Instalação**:
-   - marque **Instalação no servidor** e **Instalação do usuário**;
-   - em instalação no servidor, adicione o escopo `applications.commands`;
-   - copie o **Link de instalação**, abra no navegador e adicione o app ao seu servidor.
+- Ative **Ativar atividades** e salve.
+- Se a chave estiver cinza com o aviso "Requisito necessário: mapeamento de URL", o passo 5.1 não foi salvo.
 
-### 6. Usar
+**5.3 Configurar a instalação** (menu lateral → **Instalação**)
 
-1. Entre num canal de voz do servidor onde você instalou o app.
-2. Clique no 🚀 (**Atividades**) e escolha o seu app. Na primeira vez, autorize.
-3. Escolha a qualidade e clique em **Compartilhar tela**.
-4. Quem estiver na call abre a mesma Atividade e assiste.
+- Em **Contextos de instalação**, marque **Instalação no servidor** (Guild Install) e **Instalação do usuário** (User Install).
+- Em **Link de instalação**, deixe **Link fornecido pelo Discord**.
+- Em **Configurações de instalação padrão → Instalação no servidor**, adicione o escopo `applications.commands`. Não precisa do escopo `bot` nem de permissões.
+- Salve e **copie o link de instalação**. Ele é parecido com `https://discord.com/oauth2/authorize?client_id=...`.
 
-Para usar em outros servidores, mande o **link de instalação** para o dono do servidor.
+### 6. Adicionar o app ao seu servidor
+
+1. Abra o **link de instalação** no navegador, já logado no Discord.
+2. Escolha **Adicionar ao servidor** e selecione o servidor. Você precisa da permissão **Gerenciar servidor** nele.
+3. Autorize.
+
+O app agora aparece em **Configurações do servidor → Integrações**.
+
+> **Para outros servidores:** mande o mesmo link para o dono ou um admin do servidor e peça para ele fazer estes três passos.
+
+### 7. Abrir a Atividade na call
+
+1. **Recarregue o Discord** antes da primeira vez (**Ctrl+R**, ou feche e abra o app). Sem isso, o Discord muitas vezes não enxerga o app recém-instalado.
+2. Entre num **canal de voz** do servidor.
+3. Na barra de controles da call, clique no ícone de **Atividades** (o foguete 🚀).
+4. Procure o seu app pelo nome. **Se a busca não encontrar,** role a lista: ele costuma aparecer numa seção própria do servidor, separada dos jogos oficiais.
+5. Clique no app. Na tela que abre:
+   - **deixe desmarcado** "Usar permissão especial do URL da atividade", que é só para desenvolvimento;
+   - clique em **Executar**, não em "Executar na DM".
+6. Na primeira vez, o Discord pede para **autorizar** o app. Aceite.
+7. A Atividade abre mostrando **"Telinha da call"** no topo.
+
+Outro jeito de abrir: digite `/` no chat do servidor e procure o comando do app (o Discord cria um comando de abertura automaticamente quando as Atividades são ligadas).
+
+### 8. Compartilhar e assistir
+
+1. Escolha a qualidade no seletor (**Fluido · 720p 60fps** para jogos).
+2. Clique em **Compartilhar tela** e escolha a tela ou janela.
+   - Para mandar o **som**, marque "Compartilhar áudio" no seletor do Windows. Funciona ao compartilhar a tela inteira.
+   - Se o Discord bloquear a captura, ele pergunta se pode **abrir um link no navegador**. Aceite e compartilhe por lá: a tela aparece dentro da Atividade do mesmo jeito.
+3. **Quem vai assistir:** basta entrar na mesma call e abrir a mesma Atividade (passos 3 a 6 do item 7). Quem já está nela aparece como ícone em cima da call, e dá para clicar para entrar.
+4. Tela cheia: botão no canto do vídeo ou **duplo clique**. Para sair, **Esc**.
+
+### Checklist rápido
+
+Use quando algo não funcionar:
+
+- [ ] `https://<seu-deploy>/api/config` abre e mostra o seu `discordClientId` e a `publicUrl` certa
+- [ ] O redirect `https://127.0.0.1` está salvo no OAuth2
+- [ ] Os dois mapeamentos (`/` e `/livekit`) estão salvos, sem `https://` ou `wss://`
+- [ ] **Ativar atividades** está ligado
+- [ ] O app foi adicionado ao servidor pelo link de instalação
+- [ ] O Discord foi recarregado (Ctrl+R) depois de instalar ou atualizar
 
 ---
 
