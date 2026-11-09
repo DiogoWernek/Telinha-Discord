@@ -34,7 +34,7 @@ async function pedirToken(corpo) {
   if (noDiscord) return iniciarNoDiscord();
 
   $('sala').value = params.get('sala') || '';
-  try { $('nome').value = localStorage.getItem('telinha-nome') || ''; } catch {}
+  try { $('nome').value = params.get('nome') || localStorage.getItem('telinha-nome') || ''; } catch {}
   if (config.precisaCodigo) $('campo-codigo').hidden = false;
 })();
 
@@ -56,7 +56,14 @@ $('form-entrar').addEventListener('submit', async (e) => {
   try {
     const nome = $('nome').value.trim();
     try { localStorage.setItem('telinha-nome', nome); } catch {}
-    await entrar(await pedirToken({ nome, sala: $('sala').value, codigo: $('codigo').value }));
+    await entrar(
+      await pedirToken({
+        nome,
+        sala: $('sala').value,
+        codigo: $('codigo').value,
+        vinculo: params.get('vinculo') || '', // veio da Atividade do Discord
+      })
+    );
   } catch (err) {
     $('erro').textContent = err.message;
   } finally {
@@ -140,6 +147,78 @@ async function entrar({ token, url, sala }) {
   atualizarVazio();
 }
 
+// ---------- Som por pessoa (mudo e volume) ----------
+const somPrefs = new Map(); // identity -> { mudo, volume }
+
+// A outra janela da mesma pessoa (ex.: Atividade abriu o navegador para compartilhar)
+function ehMinhaOutraJanela(p) {
+  try {
+    const meu = room?.localParticipant.identity;
+    return Boolean(meu) && JSON.parse(p.metadata || '{}').vinculo === meu;
+  } catch {
+    return false;
+  }
+}
+
+function prefsDe(p) {
+  if (!somPrefs.has(p.identity)) {
+    // sua própria transmissão começa no mudo: senão você se ouve (e o som pode voltar na captura)
+    somPrefs.set(p.identity, { mudo: ehMinhaOutraJanela(p), volume: 1 });
+  }
+  return somPrefs.get(p.identity);
+}
+
+function aplicarSom(identity) {
+  const pref = somPrefs.get(identity);
+  if (!pref) return;
+  document.querySelectorAll('audio[data-sid]').forEach((el) => {
+    if (el.dataset.quem !== identity) return;
+    el.muted = pref.mudo;
+    el.volume = pref.volume;
+  });
+  document.querySelectorAll('.tile').forEach((tile) => {
+    if (tile.dataset.quem !== identity) return;
+    const silencioso = pref.mudo || pref.volume === 0;
+    const btn = tile.querySelector('.btn-mudo');
+    btn.innerHTML = `<svg><use href="#${silencioso ? 'i-mudo' : 'i-som'}"/></svg>`;
+    btn.title = silencioso ? 'Ativar som' : 'Silenciar';
+    btn.setAttribute('aria-label', btn.title);
+    btn.classList.toggle('mudo', silencioso);
+    tile.querySelector('.volume').value = Math.round(pref.volume * 100);
+  });
+}
+
+function controlesDeSom(participante) {
+  const caixa = document.createElement('div');
+  caixa.className = 'controles-som';
+
+  const mudo = document.createElement('button');
+  mudo.className = 'btn icone btn-mudo';
+  mudo.onclick = () => {
+    const pref = prefsDe(participante);
+    const silencioso = pref.mudo || pref.volume === 0;
+    pref.mudo = !silencioso;
+    if (silencioso && pref.volume === 0) pref.volume = 0.5;
+    aplicarSom(participante.identity);
+  };
+
+  const volume = document.createElement('input');
+  volume.type = 'range';
+  volume.min = '0';
+  volume.max = '100';
+  volume.className = 'volume';
+  volume.setAttribute('aria-label', 'Volume');
+  volume.oninput = () => {
+    const pref = prefsDe(participante);
+    pref.volume = volume.value / 100;
+    pref.mudo = false;
+    aplicarSom(participante.identity);
+  };
+
+  caixa.append(mudo, volume);
+  return caixa;
+}
+
 function adicionarTrack(track, pub, participante, local = false) {
   if (!track) return;
 
@@ -147,7 +226,10 @@ function adicionarTrack(track, pub, participante, local = false) {
     if (local) return; // não tocar o próprio áudio
     const el = track.attach();
     el.dataset.sid = pub.trackSid;
+    el.dataset.quem = participante.identity;
     document.body.appendChild(el);
+    prefsDe(participante);
+    aplicarSom(participante.identity);
     return;
   }
 
@@ -166,8 +248,14 @@ function adicionarTrack(track, pub, participante, local = false) {
   badge.className = 'ao-vivo';
   badge.textContent = 'AO VIVO';
   const quem = document.createElement('span');
-  quem.textContent = local ? 'Você' : participante.name || participante.identity;
+  const outraJanela = !local && ehMinhaOutraJanela(participante);
+  quem.textContent = local
+    ? 'Você'
+    : outraJanela
+      ? 'Você (navegador)'
+      : participante.name || participante.identity;
   rotulo.append(badge, quem);
+  tile.dataset.quem = participante.identity;
 
   const cheia = document.createElement('button');
   cheia.className = 'btn icone tela-cheia';
@@ -178,8 +266,14 @@ function adicionarTrack(track, pub, participante, local = false) {
   video.addEventListener('dblclick', () => alternarTelaCheia(tile));
 
   tile.append(video, rotulo, cheia);
+  if (!local) {
+    // na sua própria prévia não há som para controlar
+    tile.append(controlesDeSom(participante));
+    prefsDe(participante);
+  }
   $('grade').appendChild(tile);
   tiles.set(pub.trackSid, tile);
+  if (!local) aplicarSom(participante.identity);
   atualizarVazio();
 }
 
@@ -291,7 +385,10 @@ $('btn-tela').addEventListener('click', async () => {
     if (noDiscord && ligar && config.publicUrl) {
       // O Discord bloqueia captura de tela dentro da Atividade → compartilha pelo navegador, mesma sala
       await discord.commands.openExternalLink({
-        url: `${config.publicUrl}/?sala=${encodeURIComponent(salaAtual)}`,
+        url:
+          `${config.publicUrl}/?sala=${encodeURIComponent(salaAtual)}` +
+          `&nome=${encodeURIComponent(room.localParticipant.name || '')}` +
+          `&vinculo=${encodeURIComponent(room.localParticipant.identity)}`,
       });
     } else if (err.name !== 'NotAllowedError') {
       alert('Não foi possível compartilhar a tela: ' + err.message);

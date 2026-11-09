@@ -50,6 +50,9 @@ app.post('/api/token', async (req, res) => {
     identity: `${nome}-${Math.random().toString(36).slice(2, 7)}`,
     name: nome,
     ttl: '6h',
+    // "vinculo" = identidade da outra janela da mesma pessoa (Atividade ↔ navegador),
+    // para a Atividade não tocar o som da própria transmissão
+    metadata: JSON.stringify({ vinculo: String(req.body?.vinculo ?? '').slice(0, 80) }),
   });
   at.addGrant({ room: sala, roomJoin: true, canPublish: true, canSubscribe: true });
 

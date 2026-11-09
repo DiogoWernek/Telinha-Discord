@@ -271,6 +271,32 @@ input:hover { border-color: #57443a; }
 }
 .tile:hover .tela-cheia, .tela-cheia:focus-visible { opacity: 1; }
 
+/* mudo + volume de cada transmissão */
+.controles-som {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 12px 2px 2px;
+  border-radius: 999px;
+  background: rgba(22, 17, 15, 0.75);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.tile:hover .controles-som,
+.controles-som:focus-within,
+.controles-som:has(.btn-mudo.mudo) { opacity: 1; }
+.controles-som .btn-mudo { width: 36px; height: 36px; color: var(--texto); }
+.controles-som .btn-mudo.mudo { color: var(--coral); }
+.volume {
+  width: 96px;
+  accent-color: var(--coral);
+  cursor: pointer;
+}
+
 /* tela cheia dentro da Atividade (o iframe do Discord não libera a Fullscreen API) */
 .tile.cheia {
   position: fixed;
