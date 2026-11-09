@@ -384,7 +384,6 @@ function atualizarBotaoTela() {
     : '<svg><use href="#i-tela"/></svg><span>Compartilhar tela</span>';
   $('btn-tela').classList.toggle('ativo', ligado);
   $('qualidade').disabled = ligado; // muda na próxima vez que compartilhar
-  if (!ligado) $('aviso').hidden = true;
 }
 
 // Presets de qualidade. 'motion' prioriza FPS (jogo/vídeo); 'detail' prioriza nitidez (texto/código).
@@ -433,72 +432,21 @@ $('btn-tela').addEventListener('click', async () => {
         videoCodec: 'h264',
       }
     );
-    if (ligar) await barrarSomDoPcInteiro();
   } catch (err) {
     console.error(err);
     if (noDiscord && ligar && config.publicUrl) {
       // O Discord bloqueia captura de tela dentro da Atividade → compartilha pelo navegador, mesma sala
-      await abrirNoNavegador();
+      await discord.commands.openExternalLink({
+        url:
+          `${config.publicUrl}/?sala=${encodeURIComponent(salaAtual)}` +
+          `&nome=${encodeURIComponent(room.localParticipant.name || '')}` +
+          `&vinculo=${encodeURIComponent(room.localParticipant.identity)}`,
+      });
     } else if (err.name !== 'NotAllowedError') {
       alert('Não foi possível compartilhar a tela: ' + err.message);
     }
   }
   atualizarBotaoTela();
-});
-
-// Abre o Telinha no navegador, na mesma sala, vinculado a esta Atividade
-async function abrirNoNavegador() {
-  await discord.commands.openExternalLink({
-    url:
-      `${config.publicUrl}/?sala=${encodeURIComponent(salaAtual)}` +
-      `&nome=${encodeURIComponent(room.localParticipant.name || '')}` +
-      `&vinculo=${encodeURIComponent(room.localParticipant.identity)}`,
-  });
-}
-
-// Som "só da janela" existe a partir do Chrome 141. Antes disso (e no navegador embutido
-// do Discord, se for antigo), escolher uma janela manda o som do PC INTEIRO, com a call junto.
-const versaoChrome = Number((navigator.userAgent.match(/Chrome\/(\d+)/) || [])[1] || 0);
-const temSomDeJanela = versaoChrome >= 141;
-
-// Confere o que foi capturado de verdade e corta o som se for o do PC inteiro
-async function barrarSomDoPcInteiro() {
-  const lp = room.localParticipant;
-  const somPub = lp.getTrackPublication(Track.Source.ScreenShareAudio);
-  const som = somPub?.track?.mediaStreamTrack;
-  if (!som) return;
-
-  const tela = lp.getTrackPublication(Track.Source.ScreenShare)?.track?.mediaStreamTrack;
-  const superficie = tela?.getSettings?.().displaySurface; // 'monitor' | 'window' | 'browser'
-  const pareceSistema = /system|sistema/i.test(som.label);
-  console.info('[telinha] som capturado:', { superficie, rotulo: som.label, versaoChrome });
-
-  const ehPcInteiro =
-    superficie === 'monitor' ||
-    (superficie === 'window' && (!temSomDeJanela || pareceSistema)) ||
-    (superficie !== 'browser' && pareceSistema);
-  if (!ehPcInteiro) return;
-
-  await lp.unpublishTrack(somPub.track); // para e tira da sala: ninguém recebe esse som
-  mostrarAviso(
-    superficie === 'window'
-      ? 'Som desligado: este navegador só consegue mandar o som do PC inteiro ao compartilhar uma janela, e isso levaria a call junto. A imagem continua.'
-      : 'Som desligado: o som do PC inteiro levaria a call junto. A imagem continua.'
-  );
-}
-
-function mostrarAviso(texto) {
-  $('aviso-texto').textContent = texto;
-  // dentro do Discord dá para tentar pelo Chrome, que costuma ser mais novo
-  $('btn-aviso-chrome').hidden = !(noDiscord && config.publicUrl);
-  $('aviso').hidden = false;
-}
-$('btn-aviso-fechar').addEventListener('click', () => ($('aviso').hidden = true));
-$('btn-aviso-chrome').addEventListener('click', async () => {
-  $('aviso').hidden = true;
-  await room.localParticipant.setScreenShareEnabled(false);
-  atualizarBotaoTela();
-  await abrirNoNavegador();
 });
 
 $('btn-link').addEventListener('click', async () => {

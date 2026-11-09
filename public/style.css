@@ -205,27 +205,6 @@ input:hover { border-color: #57443a; }
 }
 .acoes { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 
-.aviso {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 16px 20px 0;
-  padding: 12px 14px 12px 16px;
-  border: 1px solid rgba(255, 107, 74, 0.4);
-  border-radius: var(--raio);
-  background: var(--coral-fundo);
-  color: var(--texto);
-  font-size: 14px;
-}
-.aviso > svg { color: var(--coral); width: 22px; height: 22px; }
-.aviso p { margin: 0; flex: 1; }
-.aviso-acoes { display: flex; gap: 8px; }
-body.miniatura .aviso { display: none; }
-@media (max-width: 760px) {
-  .aviso { flex-wrap: wrap; }
-  .aviso-acoes { width: 100%; }
-}
-
 .vazio {
   flex: 1;
   display: grid;
