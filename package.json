@@ -2,6 +2,7 @@
   "name": "telinha",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "description": "Compartilhamento de tela via LiveKit, com link para mandar no Discord",
   "type": "module",
   "scripts": {

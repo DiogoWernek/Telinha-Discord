@@ -195,6 +195,10 @@ Use a URL `https://...trycloudflare.com` que aparecer no mapeamento `/` do porta
 
 ---
 
+## Licença
+
+[MIT](LICENSE): use, modifique e hospede à vontade, inclusive no seu servidor. Só mantenha o aviso de copyright.
+
 ## Feito com
 
 [LiveKit](https://livekit.io) · [Discord Embedded App SDK](https://github.com/discord/embedded-app-sdk) · [Express](https://expressjs.com) · [esbuild](https://esbuild.github.io) · fontes [Bricolage Grotesque](https://fonts.google.com/specimen/Bricolage+Grotesque) e [Figtree](https://fonts.google.com/specimen/Figtree) (OFL)
