@@ -164,13 +164,29 @@ function adicionarTrack(track, pub, participante, local = false) {
   cheia.innerHTML = '<svg><use href="#i-cheia"/></svg>';
   cheia.title = 'Tela cheia';
   cheia.setAttribute('aria-label', 'Tela cheia');
-  cheia.onclick = () => (document.fullscreenElement ? document.exitFullscreen() : tile.requestFullscreen());
+  cheia.onclick = () => alternarTelaCheia(tile);
+  video.addEventListener('dblclick', () => alternarTelaCheia(tile));
 
   tile.append(video, rotulo, cheia);
   $('grade').appendChild(tile);
   tiles.set(pub.trackSid, tile);
   atualizarVazio();
 }
+
+// O iframe do Discord não libera a Fullscreen API → cai para "tela cheia" dentro da Atividade
+async function alternarTelaCheia(tile) {
+  if (document.fullscreenElement) return document.exitFullscreen();
+  if (tile.classList.contains('cheia')) return tile.classList.remove('cheia');
+  try {
+    if (!document.fullscreenEnabled) throw new Error('sem fullscreen');
+    await tile.requestFullscreen();
+  } catch {
+    tile.classList.add('cheia');
+  }
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') document.querySelectorAll('.tile.cheia').forEach((t) => t.classList.remove('cheia'));
+});
 
 function removerTrack(track, pub) {
   track?.detach().forEach((el) => el.remove());
@@ -214,10 +230,27 @@ function atualizarBotaoTela() {
     ? '<svg><use href="#i-parar"/></svg><span>Parar de compartilhar</span>'
     : '<svg><use href="#i-tela"/></svg><span>Compartilhar tela</span>';
   $('btn-tela').classList.toggle('ativo', ligado);
+  $('qualidade').disabled = ligado; // muda na próxima vez que compartilhar
 }
+
+// Presets de qualidade. 'motion' prioriza FPS (jogo/vídeo); 'detail' prioriza nitidez (texto/código).
+const QUALIDADES = {
+  fluido: { w: 1280, h: 720, fps: 60, bitrate: 5_000_000, hint: 'motion' },
+  equilibrado: { w: 1920, h: 1080, fps: 30, bitrate: 6_000_000, hint: 'motion' },
+  maximo: { w: 1920, h: 1080, fps: 60, bitrate: 9_000_000, hint: 'motion' },
+  nitido: { w: 1920, h: 1080, fps: 30, bitrate: 4_000_000, hint: 'detail' },
+};
+try {
+  const salva = localStorage.getItem('telinha-qualidade');
+  if (salva in QUALIDADES) $('qualidade').value = salva;
+} catch {}
+$('qualidade').addEventListener('change', () => {
+  try { localStorage.setItem('telinha-qualidade', $('qualidade').value); } catch {}
+});
 
 $('btn-tela').addEventListener('click', async () => {
   const ligar = !room.localParticipant.isScreenShareEnabled;
+  const q = QUALIDADES[$('qualidade').value] || QUALIDADES.fluido;
   try {
     await room.localParticipant.setScreenShareEnabled(
       ligar,
@@ -231,10 +264,17 @@ $('btn-tela').addEventListener('click', async () => {
           autoGainControl: false,
         },
         selfBrowserSurface: 'exclude',
-        resolution: { width: 1920, height: 1080, frameRate: 30 },
-        contentHint: 'detail',
+        resolution: { width: q.w, height: q.h, frameRate: q.fps },
+        contentHint: q.hint,
       },
-      { videoEncoding: { maxBitrate: 4_000_000, maxFramerate: 30 } }
+      {
+        // para tela o LiveKit usa screenShareEncoding (o padrão dele é 1080p a 15fps!)
+        screenShareEncoding: { maxBitrate: q.bitrate, maxFramerate: q.fps },
+        // sob rede ruim: jogo perde resolução mas mantém FPS; texto o contrário
+        degradationPreference: q.hint === 'motion' ? 'maintain-framerate' : 'maintain-resolution',
+        // H.264 costuma ter codificação por hardware → menos CPU, mais FPS
+        videoCodec: 'h264',
+      }
     );
   } catch (err) {
     console.error(err);

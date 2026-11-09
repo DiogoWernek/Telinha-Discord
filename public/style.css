@@ -252,13 +252,41 @@ input:hover { border-color: #57443a; }
 }
 .tile:hover .tela-cheia, .tela-cheia:focus-visible { opacity: 1; }
 
+/* tela cheia dentro da Atividade (o iframe do Discord não libera a Fullscreen API) */
+.tile.cheia {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  border-radius: 0;
+  border: 0;
+  display: grid;
+  place-items: center;
+}
+.tile.cheia video { width: 100%; height: 100%; max-height: none; aspect-ratio: auto; }
+
+.seletor {
+  height: 40px;
+  padding: 0 34px 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--borda);
+  background: var(--bg-2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m7 10 5 5 5-5' fill='none' stroke='%23bba899' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center / 16px;
+  color: var(--texto-2);
+  font: 600 13px var(--corpo);
+  appearance: none;
+  cursor: pointer;
+}
+.seletor:hover { color: var(--texto); border-color: #57443a; }
+.seletor:disabled { opacity: 0.5; cursor: default; }
+.seletor option { background: var(--sup); color: var(--texto); }
+
 /* ---------- Responsivo ---------- */
 @media (max-width: 760px) {
   .entrada { grid-template-columns: 1fr; padding-top: 40px; }
   .hero h1 { margin: 16px 0 10px; }
   .barra { flex-wrap: wrap; padding: 10px 14px; }
   .avatares { display: none; }
-  .acoes { width: 100%; }
+  .acoes { width: 100%; flex-wrap: wrap; }
+  .seletor { flex: 1; min-width: 0; }
   .btn span { display: none; }
   .btn.primario span { display: inline; }
   .acoes .btn.primario { flex: 1; justify-content: center; }

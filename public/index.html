@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#16110F" />
   <title>Telinha</title>
   <link rel="icon" href="icon.svg?v=91c4f091" type="image/svg+xml" />
-  <link rel="stylesheet" href="style.css?v=e70837b3" />
+  <link rel="stylesheet" href="style.css?v=4d6b34bf" />
 </head>
 <body>
   <!-- ícones (traço 2px, 24px) -->
@@ -64,6 +64,12 @@
       <div class="acoes">
         <button id="btn-audio" class="btn fantasma" hidden><svg><use href="#i-som"/></svg><span>Ativar som</span></button>
         <button id="btn-link" class="btn fantasma"><svg><use href="#i-link"/></svg><span>Copiar link</span></button>
+        <select id="qualidade" class="seletor" title="Qualidade da transmissão" aria-label="Qualidade da transmissão">
+          <option value="fluido">Fluido · 720p 60fps</option>
+          <option value="equilibrado">Equilibrado · 1080p 30fps</option>
+          <option value="maximo">Máximo · 1080p 60fps</option>
+          <option value="nitido">Texto nítido · 1080p</option>
+        </select>
         <button id="btn-tela" class="btn primario"><svg><use href="#i-tela"/></svg><span>Compartilhar tela</span></button>
         <button id="btn-sair" class="btn icone" title="Sair da sala" aria-label="Sair da sala"><svg><use href="#i-sair"/></svg></button>
       </div>
@@ -77,6 +83,6 @@
     <div id="grade" class="grade"></div>
   </section>
 
-  <script type="module" src="app.js?v=3d93100c"></script>
+  <script type="module" src="app.js?v=61bc69b5"></script>
 </body>
 </html>
