@@ -14,6 +14,14 @@ let salaAtual = '';
 let config = {};
 const tiles = new Map(); // trackSid -> elemento .tile
 
+// Ao escolher uma JANELA, pede só o som dela (Chrome 141+). Assim o jogo vai com som,
+// mas a voz da call do Discord não, e a galera não se ouve de volta.
+// O LiveKit não repassa essa opção, então ela é injetada aqui. Navegadores antigos ignoram.
+if (navigator.mediaDevices?.getDisplayMedia) {
+  const original = navigator.mediaDevices.getDisplayMedia.bind(navigator.mediaDevices);
+  navigator.mediaDevices.getDisplayMedia = (opcoes = {}) => original({ windowAudio: 'window', ...opcoes });
+}
+
 async function pedirToken(corpo) {
   const resp = await fetch(api('/api/token'), {
     method: 'POST',
@@ -388,6 +396,9 @@ $('btn-tela').addEventListener('click', async () => {
           autoGainControl: false,
         },
         selfBrowserSurface: 'exclude',
+        // som do PC inteiro sempre leva a call do Discord junto → nem oferecer.
+        // Som continua disponível por janela (jogo) e por aba (vídeo/site).
+        systemAudio: 'exclude',
         resolution: { width: q.w, height: q.h, frameRate: q.fps },
         contentHint: q.hint,
       },
