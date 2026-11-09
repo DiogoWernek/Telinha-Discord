@@ -9,6 +9,10 @@
   Projeto open source: hospede o seu e use com a sua galera.
 </p>
 
+<p align="center">
+  <img src="docs/telinha-em-uso.png" alt="Telinha rodando como Atividade numa call do Discord, com uma tela compartilhada ao vivo" width="900" />
+</p>
+
 ---
 
 ## O que ele faz
