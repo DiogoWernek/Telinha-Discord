@@ -215,6 +215,10 @@ function controlesDeSom(participante) {
     aplicarSom(participante.identity);
   };
 
+  // clique com o mouse não deixa foco preso (senão os controles ficam aparecendo)
+  mudo.addEventListener('pointerup', () => mudo.blur());
+  volume.addEventListener('pointerup', () => volume.blur());
+
   caixa.append(mudo, volume);
   return caixa;
 }
@@ -263,6 +267,7 @@ function adicionarTrack(track, pub, participante, local = false) {
   cheia.title = 'Tela cheia';
   cheia.setAttribute('aria-label', 'Tela cheia');
   cheia.onclick = () => alternarTelaCheia(tile);
+  cheia.addEventListener('pointerup', () => cheia.blur());
   video.addEventListener('dblclick', () => alternarTelaCheia(tile));
 
   tile.append(video, rotulo, cheia);
