@@ -138,6 +138,25 @@ input {
 }
 input::placeholder { color: var(--texto-3); }
 input:hover { border-color: #57443a; }
+.campo-senha { position: relative; display: block; }
+.campo-senha input { width: 100%; padding-right: 48px; }
+.btn-olho {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--texto-3);
+  cursor: pointer;
+}
+.btn-olho:hover { color: var(--texto); background: var(--sup); }
+.btn-olho:focus-visible { outline: 2px solid var(--coral); outline-offset: 0; }
 .erro { color: #ff9a85; min-height: 1.2em; margin: 0; font-size: 14px; }
 
 .carregando { grid-column: 1 / -1; text-align: center; color: var(--texto-2); }

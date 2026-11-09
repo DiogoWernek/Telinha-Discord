@@ -39,6 +39,16 @@ async function pedirToken(corpo) {
 })();
 
 // ---------- Modo navegador ----------
+$('btn-olho').addEventListener('click', () => {
+  const mostrar = $('codigo').type === 'password';
+  $('codigo').type = mostrar ? 'text' : 'password';
+  const rotulo = mostrar ? 'Esconder código' : 'Mostrar código';
+  $('btn-olho').setAttribute('aria-label', rotulo);
+  $('btn-olho').title = rotulo;
+  $('btn-olho').innerHTML = `<svg><use href="#${mostrar ? 'i-olho-fechado' : 'i-olho'}"/></svg>`;
+  $('codigo').focus();
+});
+
 $('form-entrar').addEventListener('submit', async (e) => {
   e.preventDefault();
   $('erro').textContent = '';
