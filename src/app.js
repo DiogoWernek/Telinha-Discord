@@ -110,6 +110,16 @@ async function iniciarNoDiscord() {
       sala: `canal-${discord.channelId}`,
       discordToken: access_token,
     });
+    // Quando você sai da Atividade, o Discord a mostra como miniatura (PiP, layout_mode 1)
+    try {
+      await discord.subscribe('ACTIVITY_LAYOUT_MODE_UPDATE', ({ layout_mode }) => {
+        miniaturaDiscord = layout_mode === 1;
+        atualizarMiniatura();
+      });
+    } catch (err) {
+      console.warn('Sem evento de layout do Discord; usando só o tamanho da janela', err);
+    }
+
     // LiveKit também precisa passar pelo proxy do Discord (mapeamento /livekit)
     dados.url = `wss://${location.host}/.proxy/livekit`;
     await entrar(dados);
@@ -154,6 +164,16 @@ async function entrar({ token, url, sala }) {
   atualizarPessoas();
   atualizarVazio();
 }
+
+// ---------- Modo miniatura ----------
+// Mostra só a tela de quem transmite, ocupando tudo. Ativa pelo evento do Discord
+// ou quando a janela fica muito baixa (a miniatura tem ~200px de altura).
+let miniaturaDiscord = false;
+function atualizarMiniatura() {
+  document.body.classList.toggle('miniatura', miniaturaDiscord || window.innerHeight < 320);
+}
+window.addEventListener('resize', atualizarMiniatura);
+atualizarMiniatura();
 
 // ---------- Som por pessoa (mudo e volume) ----------
 const somPrefs = new Map(); // identity -> { mudo, volume }
@@ -253,7 +273,7 @@ function adicionarTrack(track, pub, participante, local = false) {
   if (pub.source !== Track.Source.ScreenShare) return;
 
   const tile = document.createElement('div');
-  tile.className = 'tile';
+  tile.className = local ? 'tile local' : 'tile';
   const video = track.attach();
   video.muted = true;
   video.playsInline = true;
@@ -299,7 +319,8 @@ function adicionarTrack(track, pub, participante, local = false) {
     tile.append(controlesDeSom(participante));
     prefsDe(participante);
   }
-  $('grade').appendChild(tile);
+  // telas dos outros vêm antes da sua prévia: na miniatura aparece a primeira
+  $('grade').insertBefore(tile, local ? null : $('grade').querySelector('.tile.local'));
   tiles.set(pub.trackSid, tile);
   if (!local) aplicarSom(participante.identity);
   atualizarVazio();

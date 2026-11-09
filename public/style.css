@@ -367,6 +367,44 @@ input:hover { border-color: #57443a; }
 .seletor:disabled { opacity: 0.5; cursor: default; }
 .seletor option { background: var(--sup); color: var(--texto); }
 
+/* ---------- Miniatura (PiP do Discord) ---------- */
+/* só a tela de quem transmite, ocupando a miniatura inteira */
+body.miniatura::before { display: none; }
+body.miniatura .barra { display: none; }
+body.miniatura .sala { min-height: 100vh; }
+body.miniatura .grade { display: block; padding: 0; height: 100vh; }
+body.miniatura .tile ~ .tile { display: none; }
+body.miniatura .tile {
+  height: 100vh;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+body.miniatura .tile video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  aspect-ratio: auto;
+  object-fit: contain;
+}
+body.miniatura .tile .rotulo { left: 6px; top: 6px; padding: 3px 8px 3px 5px; font-size: 11px; gap: 6px; }
+body.miniatura .ao-vivo { font-size: 9px; padding: 1px 5px; }
+body.miniatura .controles-som,
+body.miniatura .tela-cheia { display: none; }
+/* ninguém transmitindo: só a TV e uma linha */
+body.miniatura .vazio { padding: 8px; }
+body.miniatura .tv-vazia svg { width: 56px; height: 56px; }
+body.miniatura .vazio h2 { font-size: 15px; margin: 8px 0 0; }
+body.miniatura .vazio p { display: none; }
+/* tela de entrada/carregando na miniatura */
+body.miniatura .entrada { min-height: 100vh; padding: 12px; }
+body.miniatura .hero h1 { font-size: 36px; margin: 8px 0 0; }
+body.miniatura .slogan { display: none; }
+body.miniatura .grade:empty { display: none; }
+body.miniatura .logo-grande svg, body.miniatura .logo-pulsa svg { width: 44px; height: 44px; }
+
 /* ---------- Responsivo ---------- */
 @media (max-width: 760px) {
   .entrada { grid-template-columns: 1fr; padding-top: 40px; }
