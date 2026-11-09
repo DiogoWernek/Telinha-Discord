@@ -20,8 +20,9 @@
 - **Roda embutido na call:** abre pelo menu de Atividades do canal de voz, sem sair do Discord.
 - **Sala automática:** todo mundo no mesmo canal de voz cai na mesma sala, sem link nem configuração.
 - **Login pelo Discord:** cada um aparece com o próprio nome.
-- **Até 1080p a 60 FPS, com áudio do sistema.** Tem um seletor de qualidade para escolher entre fluidez e nitidez.
-- **Sem eco:** não recaptura o som que o próprio Telinha toca.
+- **Até 1080p a 60 FPS.** Tem um seletor de qualidade para escolher entre fluidez e nitidez.
+- **Som do jogo ou do vídeo, sem a call junto:** o som vai por janela (o jogo) ou por aba (um vídeo). O som do PC inteiro nunca é capturado, porque ele levaria a voz da call do Discord e a galera se ouviria de volta.
+- **Mudo e volume** em cada transmissão. Sua própria transmissão começa no mudo, para você não se ouvir.
 - **Tela cheia** dentro da Atividade (Esc ou duplo clique para sair).
 - **Também funciona fora do Discord,** como um site normal: você cria uma sala e manda o link.
 
@@ -165,7 +166,9 @@ Outro jeito de abrir: digite `/` no chat do servidor e procure o comando do app 
 
 1. Escolha a qualidade no seletor (**Fluido · 720p 60fps** para jogos).
 2. Clique em **Compartilhar tela** e escolha a tela ou janela.
-   - Para mandar o **som**, marque "Compartilhar áudio" no seletor do Windows. Funciona ao compartilhar a tela inteira.
+   - Para mandar o **som de um jogo**, escolha a aba **Janela** e a janela do jogo. Precisa do Chrome 141 ou mais novo.
+   - Para mandar o **som de um vídeo ou site**, escolha uma **aba** do Chrome e marque "Compartilhar áudio da aba".
+   - **Tela inteira vai sem som**, de propósito: o som do PC inteiro incluiria a call do Discord.
    - Se o Discord bloquear a captura, ele pergunta se pode **abrir um link no navegador**. Aceite e compartilhe por lá: a tela aparece dentro da Atividade do mesmo jeito.
 3. **Quem vai assistir:** basta entrar na mesma call e abrir a mesma Atividade (passos 3 a 6 do item 7). Quem já está nela aparece como ícone em cima da call, e dá para clicar para entrar.
 4. Tela cheia: botão no canto do vídeo ou **duplo clique**. Para sair, **Esc**.
@@ -230,9 +233,12 @@ Use a URL `https://...trycloudflare.com` que aparecer no mapeamento `/` do porta
 **Ao compartilhar, abre uma página de erro no navegador**
 - A `PUBLIC_URL` está errada ou desatualizada. Corrija na Vercel e faça **Redeploy**.
 
-**Eco infinito no áudio**
-- Não deixe uma segunda janela do Telinha aberta **no mesmo PC** enquanto compartilha com áudio. Ela toca o som de volta e ele é capturado de novo.
-- Use um Chrome, Edge ou Discord atualizado (o recurso `restrictOwnAudio` depende disso).
+**O som do jogo não vai**
+- Compartilhe a **janela** do jogo, não a tela inteira. A tela inteira vai sem som de propósito.
+- O som por janela precisa do Chrome 141 ou mais novo. Se estiver compartilhando por dentro do Discord e não funcionar, compartilhe pelo Chrome.
+
+**Eco ou me ouvindo de volta**
+- Não deixe uma segunda janela do Telinha aberta **no mesmo PC** tocando a sua transmissão. Se ela foi aberta pela Atividade, já começa no mudo; senão, use o botão de mudo no vídeo.
 
 **Travando ou com pouco FPS**
 - Use **Fluido · 720p 60fps**.
